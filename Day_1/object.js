@@ -29,8 +29,8 @@ for(let i in obj){
     }
 
     //print double of each value
-    // console.log(obj[i]*2);
+    console.log(obj[i]*2);
 
     //print half of each value
-    // console.log(obj[i]/2);
+    console.log(Math.floor(obj[i]/2));
 }

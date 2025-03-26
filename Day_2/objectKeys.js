@@ -1,0 +1,19 @@
+// Write a function that accepts one parameter, Obj, and will work like an object. keys.
+
+object = {
+    1: 'a',
+    2: 'b',
+    3: 'c',
+    4: 'd',
+    5: 'e',
+    6: 'f',
+    7: 'g',
+}
+
+Object.prototype.Mykeys = function(obj){
+    let ans =[]
+    for(let i in obj){
+        ans.push();
+    }
+    return ans;
+}

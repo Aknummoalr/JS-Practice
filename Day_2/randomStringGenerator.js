@@ -3,12 +3,13 @@
 // issue generates string of small chars only
 
 function generate(num){
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-+<>,.?/`~";
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-+<>,.?/`~0123456789";
     let result = ''
     for(let i = 0 ;i < num; i++){
-        result += chars.charAt(Math.floor(Math.random() * num));
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
     return result;
 }
-console.log(generate(26));
+
+console.log(generate(24));

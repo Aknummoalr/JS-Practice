@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        form {
+            display: none;
+        }
+
+        /* main css class that is added to hide and show form using display property */
+        .active {  
+            display: block;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button onclick="showForm('login')">Login</button>
+    <button onclick="showForm('signup')">Signup</button>
+    <form id="login">
+        <h3>Login</h3>
+        <input type="text" placeholder="Username" required><br><br>
+        <input type="password" placeholder="Password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <form id="signup">
+        <h3>Signup</h3>
+        <input type="text" placeholder="Username" required><br><br>
+        <input type="email" placeholder="Email" required><br><br>
+        <input type="password" placeholder="Password" required><br><br>
+        <button type="submit">Signup</button>
+    </form>
+</div>
+<script>
+    function showForm(formId) {
+        document.getElementById('login').classList.remove('active');
+        document.getElementById('signup').classList.remove('active');
+        document.getElementById(formId).classList.add('active');
+    }
+</script>
+</body>
+</html>
+

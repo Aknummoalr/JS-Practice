@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        form {
+            display: none;
+        }
+
+        /* main css class that is added to hide and show form using display property */
+        .active {  
+            display: block;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button onclick="showForm('login')">Login</button>
+    <button onclick="showForm('signup')">Signup</button>
+    <form id="login">
+        <h3>Login</h3>
+        <input type="text" placeholder="Username" required id="loginUsername"><br><br>
+        <input type="password" placeholder="Password" required id="loginPassword"><br><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <form id="signup">
+        <h3>Signup</h3>
+        <input type="text" placeholder="name" id="name"><br><br>
+        <input type="text" placeholder="Username" required id="username"><br><br>
+        <input type="email" placeholder="Email" required id="email"><br><br>
+        <input type="password" placeholder="Password" required id="password"><br><br>
+        <button type="submit">Signup</button>
+    </form>
+</div>
+<script>
+    const getUsersFromStorage = () => JSON.parse(localStorage.getItem("users")) || [];
+
+    function getUser(username) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const users = getUsersFromStorage();
+                const user = users.find(u => u.username === username);
+                if (user) {
+                    resolve(user);
+                } else {
+                    reject(new Error('User not found'));
+                }
+            }, 500);
+        });
+    }
+    function setUser(userData) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                try {
+                    const users = getUsersFromStorage();
+                    const existingUserIndex = users.findIndex(u => u.username === userData.username);
+                    
+                    if (existingUserIndex !== -1) {
+                        reject(new Error('Username already exists'));
+                    } else {
+                        users.push(userData);
+                        localStorage.setItem("users", JSON.stringify(users));
+                        resolve(userData);
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            }, 500);
+        });
+    }
+
+    //SignUp functionality using setUser
+    document.getElementById('signup').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        let obj = {
+            name: document.getElementById('name').value,
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+        
+        try {
+            await setUser(obj);
+            document.getElementById('signup').reset();
+            alert("Signup successful!");
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+     
+    //Login functionality using getUser
+    document.getElementById('login').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+            const user = await getUser(username);
+            if (user.password === password) {
+                alert("Login Successful");
+            } else {
+                alert("Invalid password");
+            }
+        } catch (error) {
+            alert("Invalid username or password");
+        }
+    });
+    
+    function showForm(formId) {
+        document.getElementById('login').classList.remove('active');
+        document.getElementById('signup').classList.remove('active');
+        document.getElementById(formId).classList.add('active');
+    }
+</script>
+</body>
+</html>

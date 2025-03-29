@@ -38,32 +38,57 @@
             cursor: pointer;
             border-radius: 5px;
         }
+
+        #todo-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #todo-list {
+            text-align: left;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <button onclick="showForm('login')">Login</button>
-    <button onclick="showForm('signup')">Signup</button>
-    <form id="login">
-        <h3>Login</h3>
-        <input type="text" placeholder="Username" required id="loginUsername"><br><br>
-        <input type="password" placeholder="Password" required id="loginPassword"><br><br>
-        <button type="submit">Login</button>
-    </form>
+    <div id="auth-section">
+        <button onclick="showForm('login')">Login</button>
+        <button onclick="showForm('signup')">Signup</button>
+        <form id="login">
+            <h3>Login</h3>
+            <input type="text" placeholder="Username" required id="loginUsername"><br><br>
+            <input type="password" placeholder="Password" required id="loginPassword"><br><br>
+            <button type="submit">Login</button>
+        </form>
 
-    <form id="signup">
-        <h3>Signup</h3>
-        <input type="text" placeholder="name" id="name"><br><br>
-        <input type="text" placeholder="Username" required id="username"><br><br>
-        <input type="email" placeholder="Email" required id="email"><br><br>
-        <input type="password" placeholder="Password" required id="password"><br><br>
-        <button type="submit">Signup</button>
-    </form>
+        <form id="signup">
+            <h3>Signup</h3>
+            <input type="text" placeholder="name" id="name"><br><br>
+            <input type="text" placeholder="Username" required id="username"><br><br>
+            <input type="email" placeholder="Email" required id="email"><br><br>
+            <input type="password" placeholder="Password" required id="password"><br><br>
+            <button type="submit">Signup</button>
+        </form>
+    </div>
+
+    <div id="todo-section">
+        <h3>To-Do List</h3>
+        <form id="todo-form" class="active">
+            <input type="text" placeholder="Add new task" required id="todo-input"><br><br>
+            <button type="submit">Add Task</button>
+        </form>
+        <div id="todo-list"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
 </div>
+
 <script>
     const getUsersFromStorage = () => JSON.parse(localStorage.getItem("users")) || [];
+    const getTodosFromStorage = () => JSON.parse(localStorage.getItem("todos")) || [];
 
+    // getUser function with Promise and 500ms delay
     function getUser(username) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -77,6 +102,8 @@
             }, 500);
         });
     }
+
+    // setUser function with Promise and 500ms delay
     function setUser(userData) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -98,6 +125,56 @@
         });
     }
 
+    // saveTodo function with Promise and 500ms delay
+    function saveTodo(todo) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                try {
+                    const todos = getTodosFromStorage();
+                    todos.push(todo);
+                    localStorage.setItem("todos", JSON.stringify(todos));
+                    resolve(todo);
+                } catch (error) {
+                    reject(error);
+                }
+            }, 500);
+        });
+    }
+
+    // getTodos function with Promise and 500ms delay
+    function getTodos(email) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const todos = getTodosFromStorage();
+                const userTodos = todos.filter(todo => todo.email === email);
+                resolve(userTodos);
+            }, 500);
+        });
+    }
+
+    // Render todos to the DOM
+    async function renderTodos(email) {
+        try {
+            const todos = await getTodos(email);
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+            
+            if (todos.length === 0) {
+                todoList.innerHTML = '<p>No tasks yet. Add your first task!</p>';
+                return;
+            }
+            
+            todos.forEach(todo => {
+                const todoItem = document.createElement('div');
+                todoItem.textContent = todo.taskTitle;
+                todoList.appendChild(todoItem);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    let currentUser = null;
     //SignUp functionality using setUser
     document.getElementById('signup').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -127,7 +204,10 @@
         try {
             const user = await getUser(username);
             if (user.password === password) {
-                alert("Login Successful");
+                currentUser = user;
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('todo-section').style.display = 'block';
+                await renderTodos(user.email);
             } else {
                 alert("Invalid password");
             }
@@ -135,6 +215,34 @@
             alert("Invalid username or password");
         }
     });
+
+    // Add new todo
+    document.getElementById('todo-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const taskTitle = document.getElementById('todo-input').value.trim();
+        
+        if (taskTitle && currentUser) {
+            try {
+                const todo = {
+                    email: currentUser.email,
+                    taskTitle: taskTitle
+                };
+                await saveTodo(todo);
+                document.getElementById('todo-input').value = '';
+                await renderTodos(currentUser.email);
+            } catch (error) {
+                console.error('Error saving todo:', error);
+            }
+        }
+    });
+
+    // Logout function
+    function logout() {
+        currentUser = null;
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('todo-section').style.display = 'none';
+        document.getElementById('login').reset();
+    }
     
     function showForm(formId) {
         document.getElementById('login').classList.remove('active');

@@ -103,7 +103,7 @@
         });
     }
 
-    // setUser function with Promise and 500ms delay
+    // setUser function
     function setUser(userData) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -125,7 +125,7 @@
         });
     }
 
-    // saveTodo function with Promise and 500ms delay
+    // saveTodo function 
     function saveTodo(todo) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -141,7 +141,7 @@
         });
     }
 
-    // getTodos function with Promise and 500ms delay
+    // getTodos function
     function getTodos(email) {
         return new Promise((resolve) => {
             setTimeout(() => {
@@ -152,7 +152,7 @@
         });
     }
 
-    // Render todos to the DOM
+    // show Todos in html
     async function renderTodos(email) {
         try {
             const todos = await getTodos(email);

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="auth-section" class="hide-section">
+            <button onclick="showForm('login')">Login</button>
+            <button onclick="showForm('signup')">Signup</button>
+            
+            <form id="login">
+                <h3>Login</h3>
+                <div class="form-group">
+                    <input type="text" placeholder="Username" required id="loginUsername">
+                    <span class="error-message" id="loginUsernameError"></span>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" required id="loginPassword">
+                    <span class="error-message" id="loginPasswordError"></span>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+
+            <form id="signup">
+                <h3>Signup</h3>
+                <div class="form-group">
+                    <input type="text" placeholder="Name" id="name">
+                    <span class="error-message" id="nameError"></span>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Username" required id="username">
+                    <span class="error-message" id="usernameError"></span>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required id="email">
+                    <span class="error-message" id="emailError"></span>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" required id="password">
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+                <button type="submit">Signup</button>
+            </form>
+        </div>
+
+        <div id="todo-section" class="hide-section">
+            <h2>Welcome, <span id="username-display"></span></h2>
+            
+            <div class="todo-controls">
+                <div class="search-container">
+                    <input type="text" placeholder="Search todos..." id="search-todo">
+                </div>
+                <div class="filters">
+                    <select id="priority-filter">
+                        <option value="all">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <select id="status-filter">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <select id="sort-by">
+                        <option value="createdAt">Sort by Date</option>
+                        <option value="title">Sort by Name</option>
+                        <option value="priority">Sort by Priority</option>
+                    </select>
+                </div>
+            </div>
+
+            <form id="todo-form" style="display: block;">
+                <div class="form-group">
+                    <input type="text" placeholder="Add new task" required id="todo-input">
+                    <select id="todo-priority">
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <button type="submit">Add Task</button>
+            </form>
+
+            <div id="todo-list"></div>
+            
+            <div class="pagination">
+                <button id="prev-page" disabled>Previous</button>
+                <span id="page-info">Page 1 of 1</span>
+                <button id="next-page" disabled>Next</button>
+            </div>
+
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <script src="js/utils.js" type="module"></script>
+    <script src="js/storage.js" type="module"></script>
+    <script src="js/auth.js" type="module"></script>
+    <script src="js/todo.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>

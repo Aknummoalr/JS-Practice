@@ -1,4 +1,3 @@
-
 arr = [2,5,7,3,13,11];
 
 Array.prototype.MyReduce = function(callbackFn){
@@ -11,3 +10,11 @@ Array.prototype.MyReduce = function(callbackFn){
 
 console.log(arr.MyReduce((ac, i) => ac+i)); // 41
 console.log(arr.MyReduce((ac, i) => ac*i)); // 0
+
+//Read about polyfills(old browser compatiblity)
+
+//object.hasOwn property used insteda
+
+//Hoisting again
+
+//fetch and setTimeout not part of 

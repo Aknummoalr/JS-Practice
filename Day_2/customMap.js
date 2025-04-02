@@ -26,6 +26,11 @@ console.log(arr.MyMap(callbackFn));
 console.log(arr.MyMap(anotherCallback));
 console.log(arr.MyMap((s) => s*s));
 
+
+
+
+//************************************************ */
+
 // function MyMap(arr, callbackFn){
 //     let res = []
 //     for(let i=0 ; i < arr.length ; i++){
@@ -34,5 +39,8 @@ console.log(arr.MyMap((s) => s*s));
 //     return res;
 // }
 
+// function callbackFn(t){
+//     return t+1;
+// }
 
 // console.log(MyMap(arr,callbackFn));

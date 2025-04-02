@@ -13,6 +13,7 @@ function callbackFn(obj){
 
     return sum;
 }
+
 function ObjectSum(obj){
     let ans = obj.map(callbackFn);
     return ans;

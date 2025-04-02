@@ -88,9 +88,32 @@
     const getUsersFromStorage = () => JSON.parse(localStorage.getItem("users")) || [];
     const getTodosFromStorage = () => JSON.parse(localStorage.getItem("todos")) || [];
 
+    function setCookie(name, value, days){
+        const date  = new Date();
+        date.setTime(date.getTime() + (5*60*1000));// cookie expire in 5 min instead of 7 days (days*24*60*60*1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = `${name}=${value}; ${expires}; path=/`;
+    }
+
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+        }
+        return null;
+    }
+
+    function deleteCookie(name) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+
+    
     const dynamicDelay = () =>{ return Math.floor(Math.random()* 800) + 200};
     
-    // getUser function with Promise and 500ms delay
+    // getUser function
     function getUser(username) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -177,6 +200,25 @@
     }
 
     let currentUser = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        const sessionUser = getCookie('sessionUser');
+        if (sessionUser) {
+            try {
+                const user = JSON.parse(sessionUser);
+                currentUser = user;
+                document.getElementById('auth-section').style.display = "none";
+                document.getElementById('todo-section').style.display = "block";
+                await renderTodos(user.email);
+            } catch (error) {
+                console.error('Error restoring session:', error);
+                deleteCookie('sessionUser');
+            }
+        } else {
+            document.getElementById('auth-section').classList.add('show-section');
+        }
+    });
+
     //SignUp functionality using setUser
     document.getElementById('signup').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -207,6 +249,7 @@
             const user = await getUser(username);
             if (user.password === password) {
                 currentUser = user;
+                setCookie('sessionUser', JSON.stringify(user), 7); // Store for 7 days
                 document.getElementById('auth-section').style.display = 'none';
                 document.getElementById('todo-section').style.display = 'block';
                 await renderTodos(user.email);
@@ -241,9 +284,11 @@
     // Logout function
     function logout() {
         currentUser = null;
+        deleteCookie('sessionUser');
         document.getElementById('auth-section').style.display = 'block';
         document.getElementById('todo-section').style.display = 'none';
         document.getElementById('login').reset();
+        showForm('login');
     }
     
     function showForm(formId) {

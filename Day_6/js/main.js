@@ -9,18 +9,15 @@ const loginForm = document.getElementById('login');
 const signupForm = document.getElementById('signup');
 const todoForm = document.getElementById('todo-form');
 const searchInput = document.getElementById('search-todo');
-const priorityFilter = document.getElementById('priority-filter');
-const statusFilter = document.getElementById('status-filter');
+
+// const priorityFilter = document.getElementById('priority-filter');
+// const statusFilter = document.getElementById('status-filter');
+
 const sortBySelect = document.getElementById('sort-by');
 const prevPageBtn = document.getElementById('prev-page');
 const nextPageBtn = document.getElementById('next-page');
 const pageInfo = document.getElementById('page-info');
 const usernameDisplay = document.getElementById('username-display');
-
-//delete below
-const editModal = document.getElementById('edit-modal');
-const editTodoForm = document.getElementById('edit-todo-form');
-const closeModalBtn = document.querySelector('.close-modal');
 
 // State
 let currentPage = 1;
@@ -43,10 +40,10 @@ async function init() {
         showTodoSection();
         loadTodos();
     } else {
-        showAuthSection();
+        showAuthSection(); // nhi toh login
     }
     
-    setupEventListeners();
+    setupEventListeners(); //alg form dikhao based on button click
 }
 
 function setupEventListeners() {
@@ -60,24 +57,25 @@ function setupEventListeners() {
     // Search with debounce
     searchInput.addEventListener('input', debounce(() => {
         currentFilters.search = searchInput.value.trim();
-        currentPage = 1;
+        currentPage = 1; // by default load the todos in 1st page
         loadTodos();
     }, 300));
     
     // Filters
-    priorityFilter.addEventListener('change', () => {
-        currentFilters.priority = priorityFilter.value;
-        currentPage = 1;
-        loadTodos();
-    });
+    // priorityFilter.addEventListener('change', () => {
+    //     currentFilters.priority = priorityFilter.value;
+    //     currentPage = 1;
+    //     loadTodos();
+    // });
     
-    statusFilter.addEventListener('change', () => {
-        currentFilters.status = statusFilter.value;
-        currentPage = 1;
-        loadTodos();
-    });
+    // statusFilter.addEventListener('change', () => {
+    //     currentFilters.status = statusFilter.value;
+    //     currentPage = 1;
+    //     loadTodos();
+    // });
     
     // Sort
+    
     sortBySelect.addEventListener('change', () => {
         currentSort = sortBySelect.value;
         loadTodos();

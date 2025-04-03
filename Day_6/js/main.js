@@ -114,24 +114,6 @@ async function handleLogin(e) {
     }
 }
 
-async function handleSignup(e) {
-    e.preventDefault();
-    const name = document.getElementById('name').value;
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    try {
-        validateSignupForm(name, username, email, password);
-        const user = await setUser({ name, username, email, password });
-        currentUser = user;
-        showTodoSection();
-        loadTodos();
-        signupForm.reset();
-    } catch (error) {
-        showError('usernameError', error.message);
-    }
-}
 
 // Todo handlers
 async function handleAddTodo(e) {
@@ -264,6 +246,18 @@ function showTodoSection() {
     usernameDisplay.textContent = currentUser.username;
 }
 
+
+function clearErrors(fields) {
+    fields.forEach(field => {
+        document.getElementById(field).textContent = '';
+    });
+}
+
+function showError(field, message) {
+    document.getElementById(field).textContent = message;
+}
+
+
 // Form validation
 function validateLoginForm(username, password) {
     clearErrors(['loginUsernameError', 'loginPasswordError']);
@@ -281,36 +275,55 @@ function validateSignupForm(name, username, email, password) {
     clearErrors(['nameError', 'usernameError', 'emailError', 'passwordError']);
     
     if (!name) {
-        throw new Error('Name is required');
+        showError('nameError', 'Name is required');
+        return false;
     }
     
     if (!username) {
-        throw new Error('Username is required');
+        showError('usernameError', 'Username is required');
+        return false;
     }
     
     if (!email) {
-        throw new Error('Email is required');
+        showError('emailError', 'Email is required');
+        return false;
     } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        throw new Error('Invalid email format');
+        showError('emailError', 'Invalid email format');
+        return false;
     }
     
     if (!password) {
-        throw new Error('Password is required');
+        showError('passwordError', 'Password is required');
+        return false;
     } else if (password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
+        showError('passwordError', 'Password must be at least 6 characters');
+        return false;
+    }
+    
+    return true;
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    if (!validateSignupForm(name, username, email, password)) {
+        return ; 
+    }
+    
+    try {
+        const user = await setUser({ name, username, email, password });
+        currentUser = user;
+        showTodoSection();
+        loadTodos();
+        signupForm.reset();
+    } catch (error) {
+        showError('usernameError', error.message);
     }
 }
-
-function clearErrors(fields) {
-    fields.forEach(field => {
-        document.getElementById(field).textContent = '';
-    });
-}
-
-function showError(field, message) {
-    document.getElementById(field).textContent = message;
-}
-
 // Logout
 function logout() {
     logoutUser();

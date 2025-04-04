@@ -155,6 +155,8 @@ async function loadTodos() {
     }
 }
 
+
+
 function renderTodos(todos) {
     const todoList = document.getElementById('todo-list');
     todoList.innerHTML = '';
@@ -167,7 +169,9 @@ function renderTodos(todos) {
     todos.forEach(todo => {
         const todoItem = document.createElement('div');
         todoItem.className = `todo-item ${todo.priority} ${todo.status}`;
+        todoItem.dataset.id = todo.id;
         
+        // Normal view (non-editing)
         todoItem.innerHTML = `
             <div class="todo-content">
                 <h4>${todo.title}</h4>
@@ -180,34 +184,52 @@ function renderTodos(todos) {
             </div>
         `;
         
-        // Edit button click function
-        todoItem.querySelector('.edit-btn').addEventListener('click', async () => {
-            // Create form elements
-            const title = prompt('Task Title:', todo.title);
-            if (title === null) return; // User cancelled
+        // Edit button function
+        todoItem.querySelector('.edit-btn').addEventListener('click', () => {
+            todoItem.innerHTML = `
+                <div class="edit-form">
+                    <input type="text" class="edit-title" value="${todo.title}">
+                    <div class="edit-fields">
+                        <select class="edit-priority">
+                            <option value="high" ${todo.priority === 'high' ? 'selected' : ''}>High</option>
+                            <option value="medium" ${todo.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                            <option value="low" ${todo.priority === 'low' ? 'selected' : ''}>Low</option>
+                        </select>
+                        <select class="edit-status">
+                            <option value="pending" ${todo.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="in-progress" ${todo.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="completed" ${todo.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </div>
+                    <div class="edit-actions">
+                        <button class="save-btn">Save</button>
+                        <button class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            `;
             
-            const priority = prompt('Priority (high/medium/low):', todo.priority);
-            if (!['high', 'medium', 'low'].includes(priority)) {
-                alert('Invalid priority! Must be high, medium, or low');
-                return;
-            }
             
-            const status = prompt('Status (pending/in-progress/completed):', todo.status);
-            if (!['pending', 'in-progress', 'completed'].includes(status)) {
-                alert('Invalid status! Must be pending, in-progress, or completed');
-                return;
-            }
+            todoItem.querySelector('.save-btn').addEventListener('click', async () => {
+                const title = todoItem.querySelector('.edit-title').value.trim();
+                const priority = todoItem.querySelector('.edit-priority').value;
+                const status = todoItem.querySelector('.edit-status').value;
+                
+                try {
+                    await updateTodo(todo.id, { title, priority, status });
+                    await loadTodos(); // Refresh
+                } catch (error) {
+                    console.error('Error updating todo:', error);
+                    alert('Failed to update todo');
+                }
+            });
             
-            try {
-                await updateTodo(todo.id, { title, priority, status });
-                await loadTodos();
-            } catch (error) {
-                console.error('Error updating todo:', error);
-                alert('Failed to update todo');
-            }
+            // Cancel button
+            todoItem.querySelector('.cancel-btn').addEventListener('click', async () => {
+                await loadTodos(); 
+            });
         });
         
-        // Delete button click function
+        // Delete button function still i use alert()
         todoItem.querySelector('.delete-btn').addEventListener('click', async () => {
             if (confirm('Are you sure you want to delete this todo?')) {
                 try {
@@ -219,10 +241,11 @@ function renderTodos(todos) {
                 }
             }
         });
-
+        
         todoList.appendChild(todoItem);
     });
 }
+
 
 function updatePagination(pagination) {
     prevPageBtn.disabled = pagination.currentPage === 1;

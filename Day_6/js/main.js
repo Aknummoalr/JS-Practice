@@ -21,7 +21,7 @@ const usernameDisplay = document.getElementById('username-display');
 
 // State
 let currentPage = 1;
-const todosPerPage = 5;
+const todosPerPage = 3;
 let currentFilters = {
     priority: 'all',
     status: 'all',
